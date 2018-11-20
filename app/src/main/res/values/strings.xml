@@ -26,10 +26,14 @@
     <string name="user_profile_photo">User Profile Photo</string>
     <string name="profile_picture">Profile picture</string>
     <string name="name">Name</string>
-    <string name="display_name">Display Name</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="write_a_message">Write a message</string>
     <string name="sendmessage">SendMessage</string>
+    <string name="save_details">Save Details</string>
+    <string name="vehicle_model">Vehicle Model</string>
+    <string name="display_name">Display Name</string>
+    <string name="forgot_password">Forgot Password</string>
+    <string name="login">Login</string>
 </resources>
