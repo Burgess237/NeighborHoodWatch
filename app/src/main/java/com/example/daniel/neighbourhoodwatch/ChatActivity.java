@@ -2,6 +2,7 @@ package com.example.daniel.neighbourhoodwatch;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.EditText;
@@ -25,6 +26,9 @@ public class ChatActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         send = findViewById(R.id.btnSend);
         send.setOnClickListener((View view) -> {
@@ -80,5 +84,9 @@ public class ChatActivity extends AppCompatActivity {
             }
         };
         listOfMessages.setAdapter(adapter);
+    }
+
+    public void onPanic(View view){
+
     }
 }

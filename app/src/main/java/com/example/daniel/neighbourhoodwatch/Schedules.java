@@ -109,6 +109,9 @@ public class Schedules extends AppCompatActivity {
         }
     }
 
+    public void onPanic(View view){
+    }
+
     class HistoryHolder extends RecyclerView.ViewHolder {
         private View view;
 
