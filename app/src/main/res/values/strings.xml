@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name">NeighbourHoodWatch</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="access_token">pk.eyJ1IjoiYnVyZ2VzczIzNyIsImEiOiJjam5hMmxhbmY0OGt4M3FxdnY0a3JhNzJqIn0.cTIswASOJ0gt2sjkl_7ZQw</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="panic">Panic</string>
+    <string name="title_activity_login">Sign in</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password (optional)</string>
+    <string name="action_sign_in">Sign in</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="register">Register</string>
+    <string name="title_activity_register">Register</string>
+    <string name="user_profile_photo">User Profile Photo</string>
+    <string name="profile_picture">Profile picture</string>
+    <string name="name">Name</string>
+    <string name="display_name">Display Name</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="write_a_message">Write a message</string>
+    <string name="sendmessage">SendMessage</string>
+</resources>
