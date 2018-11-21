@@ -14,8 +14,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="58dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="74dp"
         android:text="Current Patroller"
         android:textSize="30sp"
         tools:layout_editor_absoluteX="16dp"
@@ -72,33 +72,40 @@
         android:layout_alignBaseline="@+id/EndPatrol"
         android:layout_alignBottom="@+id/EndPatrol"
         android:layout_alignParentStart="true"
+        android:layout_marginStart="26dp"
+        android:layout_marginBottom="-2dp"
         android:text="Start Patrol"
+        app:cornerRadius="10dp"
         tools:layout_editor_absoluteX="45dp"
         tools:layout_editor_absoluteY="260dp" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/EndPatrol"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/ViewMap"
         android:layout_alignEnd="@+id/patrollerPic"
-        android:layout_marginBottom="55dp"
+        android:layout_marginEnd="17dp"
+        android:layout_marginBottom="53dp"
         android:text="End Patrol"
+        app:cornerRadius="10dp"
         tools:layout_editor_absoluteX="204dp"
         tools:layout_editor_absoluteY="260dp" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/ReportIncident"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
         android:layout_marginBottom="56dp"
         android:text="Report Incident"
+        android:textColorLink="@color/colorPrimaryDark"
+        app:cornerRadius="50dp"
         tools:layout_editor_absoluteX="0dp"
         tools:layout_editor_absoluteY="483dp" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/ViewMap"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -106,7 +113,10 @@
         android:layout_alignParentStart="true"
         android:layout_marginBottom="26dp"
         android:text="ViewMap"
+        android:textColor="@color/colorPrimaryDark"
+        app:cornerRadius="50dp"
         tools:layout_editor_absoluteX="139dp"
-        tools:layout_editor_absoluteY="389dp" />
+        tools:layout_editor_absoluteY="389dp"
+        android:background="null" />
 
 </RelativeLayout>

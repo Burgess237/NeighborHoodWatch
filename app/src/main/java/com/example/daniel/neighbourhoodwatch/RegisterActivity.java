@@ -73,9 +73,9 @@ public class RegisterActivity extends AppCompatActivity {
             auth = FirebaseAuth.getInstance();
 
             Button btnSignIn = findViewById(R.id.sign_in_button);
-            Button btnSignUp = findViewById(R.id.sign_up_button);
-            inputEmail =  findViewById(R.id.email);
-            inputPassword =  findViewById(R.id.password);
+
+            inputEmail =  findViewById(R.id.RegEmail);
+            inputPassword =  findViewById(R.id.RegPassword);
             progressBar =  findViewById(R.id.progressBar);
             Button btnResetPassword = findViewById(R.id.btn_reset_password);
 
@@ -88,6 +88,7 @@ public class RegisterActivity extends AppCompatActivity {
                 finish();
             });
 
+            Button btnSignUp = findViewById(R.id.sign_up_button);
             btnSignUp.setOnClickListener(v -> {
 
                 String email = inputEmail.getText().toString().trim();
@@ -108,22 +109,19 @@ public class RegisterActivity extends AppCompatActivity {
                     return;
                 }
 
-                progressBar.setVisibility(View.VISIBLE);
                 //create user
                 auth.createUserWithEmailAndPassword(email, password)
                         .addOnCompleteListener(RegisterActivity.this, task -> {
-                            Toast.makeText(RegisterActivity.this, "createUserWithEmail:onComplete:" + task.isSuccessful(), Toast.LENGTH_SHORT).show();
-                            progressBar.setVisibility(View.GONE);
+                            Toast.makeText(RegisterActivity.this, "createUserWithEmail:onComplete:" + task.isSuccessful(), Toast.LENGTH_LONG).show();
                             // If sign in fails, display a message to the user. If sign in succeeds
                             // the auth state listener will be notified and logic to handle the
                             // signed in user can be handled in the listener.
-                            final Handler handler = new Handler();
 
                             if (!task.isSuccessful()) {
                                 Toast.makeText(RegisterActivity.this, "Authentication failed." + task.getException(),
                                         Toast.LENGTH_SHORT).show();
                             } else {
-                                handler.postDelayed(() -> auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(RegisterActivity.this, Task -> {
+                                auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(RegisterActivity.this, Task -> {
                                     if(Task.isSuccessful()){
                                         FirebaseUser user = auth.getCurrentUser();
                                         startActivity(new Intent(RegisterActivity.this, AdditionalDetials.class));
@@ -131,9 +129,7 @@ public class RegisterActivity extends AppCompatActivity {
                                         Toast.makeText(RegisterActivity.this, "Signed In as :" + user.getEmail(),
                                                 Toast.LENGTH_SHORT).show();
                                     }
-                                }), 2000);
-
-
+                                });
                             }
                         });
             });

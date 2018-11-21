@@ -43,7 +43,7 @@ public class AdditionalDetials extends AppCompatActivity {
            }
         });
 
-        profilePic = findViewById(R.id.imgbtnUser);
+        profilePic = findViewById(R.id.AddUserProPic);
         profilePic.setOnClickListener(view -> pickImageFromGallery());
 
         displayName = findViewById(R.id.addUserName);
