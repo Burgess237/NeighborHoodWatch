@@ -17,4 +17,19 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    -<style name="NavigationMapRoute">
+    <!-- Colors -->
+    <item name="routeColor">@color/bg_main</item>
+    <item name="routeModerateCongestionColor">@color/mapboxYellow</item>
+    <item name="routeSevereCongestionColor">@color/mapboxPink</item>
+    <item name="routeShieldColor">@color/mapboxWhite</item>
+    <!-- Scales -->
+    <item name="routeScale">1.0</item>
+</style>
+    -<style parent="Theme.AppCompat.NoActionBar" name="NavigationView">
+    <item name="navigationViewPrimary">@color/mapboxWhite</item>
+    <item name="navigationViewSecondary">@color/bg_main</item>
+    <item name="navigationViewAccent">@color/mapboxPink</item>
+</style>
 </resources>
+

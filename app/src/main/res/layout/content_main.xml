@@ -116,7 +116,6 @@
         android:textColor="@color/colorPrimaryDark"
         app:cornerRadius="50dp"
         tools:layout_editor_absoluteX="139dp"
-        tools:layout_editor_absoluteY="389dp"
-        android:background="null" />
+        tools:layout_editor_absoluteY="389dp"/>
 
 </RelativeLayout>
