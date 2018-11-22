@@ -43,4 +43,5 @@
     <!-- Change the following strings as required -->
     <string name="back4app_app_id">e00hPoRpAtNWH699KEyd8hBehX0InwB4zp0HF4DX</string>
     <string name="back4app_client_key">Fp2YTuvEhaXbErRWXjDvBhnVapxv1c5LKPdDQj9J</string>
+    <string name="panic1">PANIC</string>
 </resources>

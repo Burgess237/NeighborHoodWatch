@@ -210,14 +210,13 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 UserDetails ud = dataSnapshot.getValue(UserDetails.class);
-                UserName.setText(ud.getUserName());
-                UserVehicle.setText(ud.getVehicleDetails());
+
                // ProfilePic.setImageURI(uri);
-                if(!ud.getPatrolTime().isEmpty()){
-                    UserTime.setText(ud.getPatrolTime());
-                }else{
+             //   if(!ud.getPatrolTime().isEmpty()){
+              //      UserTime.setText(ud.getPatrolTime());
+             //   }else{
                     UserTime.setVisibility(GONE);
-                }
+              //  }
             }
 
             @Override
@@ -230,16 +229,20 @@ public class MainActivity extends AppCompatActivity
     public class UserDetails {
         String userName;
         String vehicleDetails;
-        String patrolTime;
+        //String patrolTime;
 
         public UserDetails(){
-
         }
 
-        public UserDetails(String DisplayName, String Vehicle, String PatrolTime) {
+        public UserDetails(String DisplayName,
+                           String Vehicle
+                           //,String PatrolTime
+        ) {
             userName = DisplayName;
             vehicleDetails = Vehicle;
-            patrolTime = PatrolTime;
+            UserName.setText(getUserName());
+            UserVehicle.setText(getVehicleDetails());
+            //patrolTime = PatrolTime;
         }
 
         String getUserName() {
@@ -258,13 +261,13 @@ public class MainActivity extends AppCompatActivity
             this.vehicleDetails = vehicleDetails;
         }
 
-         String getPatrolTime() {
+         /*String getPatrolTime() {
             return patrolTime;
         }
 
         public void setPatrolTime(String patrolTime) {
             this.patrolTime = patrolTime;
-        }
+        }*/
     }
 }
 

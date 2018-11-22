@@ -4,10 +4,12 @@ import android.annotation.SuppressLint;
 import android.location.Criteria;
 import android.location.Location;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -27,11 +29,14 @@ import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.location.LocationComponent;
+import com.mapbox.mapboxsdk.location.LocationComponentOptions;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin;
 import com.mapbox.mapboxsdk.plugins.locationlayer.modes.CameraMode;
+import com.mapbox.mapboxsdk.plugins.locationlayer.modes.RenderMode;
+import com.mapbox.services.android.navigation.ui.v5.NavigationLauncher;
 import com.mapbox.services.android.navigation.ui.v5.NavigationLauncherOptions;
 import com.mapbox.services.android.navigation.ui.v5.route.NavigationMapRoute;
 import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute;
@@ -42,96 +47,83 @@ import retrofit2.Response;
 import timber.log.Timber;
 
 
-public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, MapboxMap.OnMapClickListener,
-        LocationEngineListener, PermissionsListener{
+public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, PermissionsListener{
 
-    private MapView mapView;
-    private PermissionsManager permissionsManager;
-    private LocationEngine locationEngine;
+
     private Location originLocation;
     private Point destinationPoint;
-    private MapboxMap map;
-    private LocationLayerPlugin locationLayerPlugin;
-    private LatLng originCoord;
     private NavigationMapRoute navigationMapRoute;
     private DirectionsRoute currentRoute;
-
+    private PermissionsManager permissionsManager;
+    private MapboxMap mapboxMap;
+    private MapView mapView;
+    private Button navigationButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_map);
+
+// Mapbox access token is configured here. This needs to be called either in your application
+// object or in the same activity which contains the mapview.
         Mapbox.getInstance(this, getString(R.string.access_token));
+
+// This contains the MapView in XML and needs to be called after the access token is configured.
+        setContentView(R.layout.activity_map);
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Bundle extras = this.getIntent().getExtras();
-        String destination = null;
-        if(extras != null){
-            destination = extras.getString("LngLat");
 
-            String[] separated = destination.split(",");
-           destinationPoint = Point.fromLngLat(Double.parseDouble(separated[0]),Double.parseDouble(separated[1]));
-
-           //create this method to trigger on Load
-           //setRoute(destinationPoint, originLocation);
-
-        }
-
-        mapView.onCreate(savedInstanceState);
-
-        if (PermissionsManager.areLocationPermissionsGranted(this)) {
-            mapView.getMapAsync(this);
-        } else {
-            permissionsManager = new PermissionsManager(this);
-            permissionsManager.requestLocationPermissions(this);
-        }
-        Mapbox.getInstance(this, getString(R.string.access_token));
         mapView = findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
-    }
+        navigationButton = findViewById(R.id.btnNavigate);
+        Bundle extras = this.getIntent().getExtras();
 
-    @SuppressLint("MissingPermission")
-    @Override
-    public void onMapReady(MapboxMap mapboxMap) {
-        LocationComponent locationComponent = mapboxMap.getLocationComponent();
-        locationComponent.setLocationComponentEnabled(true);
-        locationComponent.activateLocationComponent(this);
-        originCoord = new LatLng(originLocation.getLatitude(), originLocation.getLongitude());
+        if(extras != null){
+            String destination = extras.getString("LngLat");
 
+            String[] separated = destination.split(",");
+            destinationPoint = Point.fromLngLat(Double.parseDouble(separated[0]),Double.parseDouble(separated[1]));
 
-    }
+            //create this method to trigger on Load
+            setRoute(destinationPoint, originLocation);
 
-    @SuppressWarnings( {"MissingPermission"})
-    private void enableLocationPlugin() {
-        // Check if permissions are enabled and if not request
-        if (PermissionsManager.areLocationPermissionsGranted(this)) {
-            initializeLocationEngine();
-            // Create an instance of the plugin. Adding in LocationLayerOptions is also an optional
-            // parameter
-            LocationLayerPlugin locationLayerPlugin = new LocationLayerPlugin(mapView, map);
-            // Set the plugin's camera mode
-            locationLayerPlugin.setCameraMode(CameraMode.TRACKING);
-            getLifecycle().addObserver(locationLayerPlugin);
-        } else {
-            permissionsManager = new PermissionsManager(this);
-            permissionsManager.requestLocationPermissions(this);
         }
     }
 
+    @Override
+    public void onMapReady(MapboxMap mapboxMap) {
+        this.mapboxMap = mapboxMap;
+        enableLocationComponent();
+    }
+
     @SuppressWarnings( {"MissingPermission"})
-    private void initializeLocationEngine() {
-        LocationEngineProvider locationEngineProvider = new LocationEngineProvider(this);
-        locationEngine = locationEngineProvider.obtainBestLocationEngineAvailable();
-        locationEngine.setPriority(LocationEnginePriority.HIGH_ACCURACY);
-        locationEngine.activate();
-        Location lastLocation = locationEngine.getLastLocation();
-        if (lastLocation != null) {
-            originLocation = lastLocation;
-            setCameraPosition(lastLocation);
+    private void enableLocationComponent() {
+        // Check if permissions are enabled and if not request
+        if (PermissionsManager.areLocationPermissionsGranted(this)) {
+
+            LocationComponentOptions options = LocationComponentOptions.builder(this)
+                    .trackingGesturesManagement(true)
+                    .build();
+
+            // Get an instance of the component
+            LocationComponent locationComponent = mapboxMap.getLocationComponent();
+
+            // Activate with options
+            locationComponent.activateLocationComponent(this, options);
+
+            // Enable to make component visible
+            locationComponent.setLocationComponentEnabled(true);
+
+            // Set the component's camera mode
+            locationComponent.setCameraMode(CameraMode.TRACKING);
+            locationComponent.setRenderMode(RenderMode.COMPASS);
+
+            originLocation = locationComponent.getLocationEngine().getLastLocation();
         } else {
-            locationEngine.addLocationEngineListener(this);
+            permissionsManager = new PermissionsManager(this);
+            permissionsManager.requestLocationPermissions(this);
         }
     }
 
@@ -142,81 +134,65 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     @Override
     public void onExplanationNeeded(List<String> permissionsToExplain) {
-        Toast.makeText(this,"We need your permission to use the map features", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "We need your permission to be able to find you on a map", Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void onPermissionResult(boolean granted) {
-        if (!granted) {
-            Toast.makeText(this, "You did not grant permission", Toast.LENGTH_LONG).show();
+        if (granted) {
+            enableLocationComponent();
+        } else {
+            Toast.makeText(this, "You denied to give permission for map features", Toast.LENGTH_LONG).show();
             finish();
-            permissionsManager.requestLocationPermissions(this);
-        } else{
-            enableLocationPlugin();
         }
     }
 
-
-
-    @SuppressWarnings("MissingPermission")
     @Override
-    public void onConnected() {
-        locationEngine.requestLocationUpdates();
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        if(location != null){
-            originLocation = location;
-            setCameraPosition(location);
-        }
-    }
-
-    private void setCameraPosition(Location location){
-        map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(),location.getLongitude()),13.0));
-    }
-
-    @Override
+    @SuppressWarnings( {"MissingPermission"})
     protected void onStart() {
         super.onStart();
         mapView.onStart();
     }
 
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
         mapView.onResume();
     }
 
     @Override
-    protected void onPause(){
+    protected void onPause() {
         super.onPause();
         mapView.onPause();
     }
 
     @Override
-    protected void onStop(){
+    protected void onStop() {
         super.onStop();
         mapView.onStop();
     }
 
     @Override
-    public void onMapClick(@NonNull LatLng point) {
-
-    }
-
-    public void onPanic(View view){
-
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mapView.onSaveInstanceState(outState);
     }
 
     @Override
-    public void onDestroy(){
+    protected void onDestroy() {
         super.onDestroy();
+        mapView.onDestroy();
     }
 
-    public void setRoute(Point destination, LatLng origin){
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        mapView.onLowMemory();
+    }
 
-        Point originPoint = Point.fromLngLat(origin.getLongitude(),origin.getLatitude());
+    public void setRoute(Point destination, Location originLocation){
+
+        Point originPoint = Point.fromLngLat(originLocation.getLongitude(),originLocation.getLatitude());
 
         if (destination != null) {
             NavigationRoute.builder(this)
@@ -240,19 +216,21 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     if (navigationMapRoute != null) {
                         navigationMapRoute.removeRoute();
                     } else {
-                        navigationMapRoute = new NavigationMapRoute(null, mapView, map, R.style.NavigationMapRoute);
+                        navigationMapRoute = new NavigationMapRoute(null, mapView, mapboxMap, R.style.NavigationMapRoute);
                     }
-                    navigationMapRoute.addRoute(currentRoute);
-
                     if(currentRoute != null){
-                        NavigationLauncherOptions options = NavigationLauncherOptions.builder()
+                    navigationMapRoute.addRoute(currentRoute);
+                    NavigationLauncherOptions options = NavigationLauncherOptions.builder()
                                 .directionsRoute(currentRoute)
                                 .shouldSimulateRoute(true)
                                 .enableOffRouteDetection(true)
                                 .build();
-                    }
+                    navigationButton.setVisibility(View.VISIBLE);
+                    navigationButton.setOnClickListener(v -> {
+                        NavigationLauncher.startNavigation(MapActivity.this,options);
 
-                    //navigationButton.setOnClickListener(v -> { NavigationLauncher.startNavigation(MainActivity.this,options);}
+                    });
+                    }
 
                     }
 
