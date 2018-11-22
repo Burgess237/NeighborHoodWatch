@@ -47,7 +47,7 @@
             android:layout_below="@id/txtEndTime"
             android:text="@string/name" />
 
-        <Button
+        <android.support.design.button.MaterialButton
             android:id="@+id/btnDelete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

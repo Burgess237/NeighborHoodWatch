@@ -37,7 +37,13 @@ public class schedulePatrol extends AppCompatActivity implements DatePickerDialo
         minuteString = minute < 10 ? "0"+minute : ""+minute;
         hourStringEnd = hourOfDayEnd < 10 ? "0"+hourOfDayEnd : ""+hourOfDayEnd;
         minuteStringEnd = minuteEnd < 10 ? "0"+minuteEnd : ""+minuteEnd;
-       saveToDatabase();
+        String user = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        if(user.isEmpty()){
+            Toast.makeText(this,"Error getting user ID",Toast.LENGTH_LONG).show();
+        }else{
+            saveToDatabase();
+        }
+
     }
 
     @Override

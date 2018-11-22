@@ -1,6 +1,7 @@
 package com.example.daniel.neighbourhoodwatch;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -16,10 +17,17 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseInstallation;
@@ -33,6 +41,9 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     Button Viewmap,ReportIncident;
+    String TAG = "MAIN ACTIVITY";
+    TextView UserName,UserVehicle,UserTime;
+    ImageView ProfilePic;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,8 +60,13 @@ public class MainActivity extends AppCompatActivity
             startActivity(new Intent(this, LoginActivity.class));
         }else{
             enablePush(userID);
+            populateDisplay(userID);
         }
 
+        UserName = findViewById(R.id.PatrollerName);
+        UserVehicle = findViewById(R.id.PatrolCar);
+        UserTime = findViewById(R.id.PatrolTime);
+        ProfilePic = findViewById(R.id.patrollerPic);
 
 
         FloatingActionButton fab =  findViewById(R.id.fab);
@@ -163,33 +179,94 @@ public class MainActivity extends AppCompatActivity
         ParseInstallation installation = ParseInstallation.getCurrentInstallation();
         installation.put("GCMSenderId", "123456789012");
         installation.put("userId", userId);
-        installation.saveInBackground(new SaveCallback() {
-            @Override
-            public void done(ParseException e) {
-                if (e == null) {
-                    Log.i("push", "ok");
-                    subscribe("all");
-                    subscribe(userId);
-                } else {
-                    Log.i("push", "nok");
-                    e.printStackTrace();
-                }
+        installation.saveInBackground(e -> {
+            if (e == null) {
+                Log.i("push", "ok");
+                subscribe("all");
+                subscribe(userId);
+            } else {
+                Log.i("push", "nok");
+                e.printStackTrace();
             }
         });
     }
 
 
     public void subscribe(String channel){
-        ParsePush.subscribeInBackground(channel, new SaveCallback() {
-            @Override
-            public void done(ParseException e) {
-                if (e == null) {
-                    Log.i("Push", "subscribed");
-                } else {
-                    Log.i("push", "nok");
-                    e.printStackTrace();
-                }
+        ParsePush.subscribeInBackground(channel, e -> {
+            if (e == null) {
+                Log.i("Push", "subscribed");
+            } else {
+                Log.i("push", "nok");
+                e.printStackTrace();
             }
         });
     }
+
+    public void populateDisplay(String userId){
+        Uri uri = FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl();
+        FirebaseDatabase db = FirebaseDatabase.getInstance();
+        DatabaseReference mref = db.getReference().child("user").child(userId);
+        mref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                UserDetails ud = dataSnapshot.getValue(UserDetails.class);
+                UserName.setText(ud.getUserName());
+                UserVehicle.setText(ud.getVehicleDetails());
+                ProfilePic.setImageURI(uri);
+                if(!ud.getPatrolTime().isEmpty()){
+                    UserTime.setText(ud.getPatrolTime());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+            }
+        });
+    }
+
+    public class UserDetails {
+        String userName;
+        String vehicleDetails;
+        String patrolTime;
+
+        public UserDetails(){
+
+        }
+
+        public UserDetails(String UserName, String VehicleDetails, String PatrolTime) {
+            userName = UserName;
+            vehicleDetails = VehicleDetails;
+            patrolTime = PatrolTime;
+        }
+
+        public String getUserName() {
+            return userName;
+        }
+
+        public void setUserName(String userName) {
+            this.userName = userName;
+        }
+
+        public String getVehicleDetails() {
+            return vehicleDetails;
+        }
+
+        public void setVehicleDetails(String vehicleDetails) {
+            this.vehicleDetails = vehicleDetails;
+        }
+
+        public String getPatrolTime() {
+            return patrolTime;
+        }
+
+        public void setPatrolTime(String patrolTime) {
+            this.patrolTime = patrolTime;
+        }
+    }
 }
+
+
+
+

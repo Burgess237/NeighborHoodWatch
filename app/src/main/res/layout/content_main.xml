@@ -65,7 +65,7 @@
         tools:layout_editor_absoluteX="280dp"
         tools:layout_editor_absoluteY="16dp" />
 
-    <Button
+    <android.support.design.button.MaterialButton
         android:id="@+id/StartPatrol"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -79,7 +79,7 @@
         tools:layout_editor_absoluteX="45dp"
         tools:layout_editor_absoluteY="260dp" />
 
-    <com.google.android.material.button.MaterialButton
+    <android.support.design.button.MaterialButton
         android:id="@+id/EndPatrol"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -92,7 +92,7 @@
         tools:layout_editor_absoluteX="204dp"
         tools:layout_editor_absoluteY="260dp" />
 
-    <com.google.android.material.button.MaterialButton
+    <android.support.design.button.MaterialButton
         android:id="@+id/ReportIncident"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -105,7 +105,7 @@
         tools:layout_editor_absoluteX="0dp"
         tools:layout_editor_absoluteY="483dp" />
 
-    <com.google.android.material.button.MaterialButton
+    <android.support.design.button.MaterialButton
         android:id="@+id/ViewMap"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
