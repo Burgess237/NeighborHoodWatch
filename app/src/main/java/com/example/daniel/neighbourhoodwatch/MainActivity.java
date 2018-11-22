@@ -22,20 +22,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.parse.Parse;
-import com.parse.ParseException;
 import com.parse.ParseInstallation;
 import com.parse.ParsePush;
-import com.parse.SaveCallback;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import static android.view.View.GONE;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -147,7 +145,8 @@ public class MainActivity extends AppCompatActivity
             //open chat window
             startActivity(new Intent(this, ChatActivity.class));
         } else if (id == R.id.nav_manage) {
-            //Upen user details changer
+            //Open user details changer
+
         } else if(id == R.id.nav_schedule_patrol){
             startActivity(new Intent(this,schedulePatrol.class));
 
@@ -216,6 +215,8 @@ public class MainActivity extends AppCompatActivity
                 ProfilePic.setImageURI(uri);
                 if(!ud.getPatrolTime().isEmpty()){
                     UserTime.setText(ud.getPatrolTime());
+                }else{
+                    UserTime.setVisibility(GONE);
                 }
             }
 
@@ -241,7 +242,7 @@ public class MainActivity extends AppCompatActivity
             patrolTime = PatrolTime;
         }
 
-        public String getUserName() {
+        String getUserName() {
             return userName;
         }
 
@@ -249,7 +250,7 @@ public class MainActivity extends AppCompatActivity
             this.userName = userName;
         }
 
-        public String getVehicleDetails() {
+         String getVehicleDetails() {
             return vehicleDetails;
         }
 
@@ -257,7 +258,7 @@ public class MainActivity extends AppCompatActivity
             this.vehicleDetails = vehicleDetails;
         }
 
-        public String getPatrolTime() {
+         String getPatrolTime() {
             return patrolTime;
         }
 

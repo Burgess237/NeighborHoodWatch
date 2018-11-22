@@ -90,6 +90,7 @@ public class AdditionalDetials extends AppCompatActivity {
         DatabaseReference mref = db.getReference().child("Users").child(user.getUid());
         mref.child("DisplayName").setValue(displayName.getText().toString());
         mref.child("Vehicle").setValue(vehicle.getText().toString());
+        mref.child("Image").setValue(uri);
         success=true;
         }
         catch(Exception e){
