@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -41,7 +42,7 @@ public class MainActivity extends AppCompatActivity
     Button Viewmap,ReportIncident;
     String TAG = "MAIN ACTIVITY";
     TextView UserName,UserVehicle,UserTime;
-    ImageView ProfilePic;
+    //ImageView ProfilePic;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,13 +51,12 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
-
-        String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        if(userID.isEmpty()){
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if(user ==null){
             //send user to login again
             startActivity(new Intent(this, LoginActivity.class));
         }else{
+            String userID = user.getUid();
             enablePush(userID);
             populateDisplay(userID);
         }
@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity
         UserName = findViewById(R.id.PatrollerName);
         UserVehicle = findViewById(R.id.PatrolCar);
         UserTime = findViewById(R.id.PatrolTime);
-        ProfilePic = findViewById(R.id.patrollerPic);
+        //ProfilePic = findViewById(R.id.patrollerPic);
 
 
         FloatingActionButton fab =  findViewById(R.id.fab);
@@ -212,7 +212,7 @@ public class MainActivity extends AppCompatActivity
                 UserDetails ud = dataSnapshot.getValue(UserDetails.class);
                 UserName.setText(ud.getUserName());
                 UserVehicle.setText(ud.getVehicleDetails());
-                ProfilePic.setImageURI(uri);
+               // ProfilePic.setImageURI(uri);
                 if(!ud.getPatrolTime().isEmpty()){
                     UserTime.setText(ud.getPatrolTime());
                 }else{
@@ -236,9 +236,9 @@ public class MainActivity extends AppCompatActivity
 
         }
 
-        public UserDetails(String UserName, String VehicleDetails, String PatrolTime) {
-            userName = UserName;
-            vehicleDetails = VehicleDetails;
+        public UserDetails(String DisplayName, String Vehicle, String PatrolTime) {
+            userName = DisplayName;
+            vehicleDetails = Vehicle;
             patrolTime = PatrolTime;
         }
 
