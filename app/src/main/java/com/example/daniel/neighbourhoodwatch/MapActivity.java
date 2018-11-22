@@ -51,7 +51,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
 
     private Location originLocation;
-    private Point destinationPoint;
     private NavigationMapRoute navigationMapRoute;
     private DirectionsRoute currentRoute;
     private PermissionsManager permissionsManager;
@@ -63,11 +62,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-// Mapbox access token is configured here. This needs to be called either in your application
-// object or in the same activity which contains the mapview.
+        // Mapbox access token is configured here. This needs to be called either in your application
+        // object or in the same activity which contains the mapview.
         Mapbox.getInstance(this, getString(R.string.access_token));
 
-// This contains the MapView in XML and needs to be called after the access token is configured.
+        // This contains the MapView in XML and needs to be called after the access token is configured.
         setContentView(R.layout.activity_map);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -84,7 +83,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             String destination = extras.getString("LngLat");
 
             String[] separated = destination.split(",");
-            destinationPoint = Point.fromLngLat(Double.parseDouble(separated[0]),Double.parseDouble(separated[1]));
+            Point destinationPoint = Point.fromLngLat(Double.parseDouble(separated[0]), Double.parseDouble(separated[1]));
 
             //create this method to trigger on Load
             setRoute(destinationPoint, originLocation);
@@ -241,7 +240,5 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             });
         }
     }
-
-
 
 }

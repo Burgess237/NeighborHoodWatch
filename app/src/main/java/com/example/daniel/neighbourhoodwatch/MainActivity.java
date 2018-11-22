@@ -146,10 +146,9 @@ public class MainActivity extends AppCompatActivity
             startActivity(new Intent(this, ChatActivity.class));
         } else if (id == R.id.nav_manage) {
             //Open user details changer
-
+            startActivity(new Intent(this, AdditionalDetials.class));
         } else if(id == R.id.nav_schedule_patrol){
             startActivity(new Intent(this,schedulePatrol.class));
-
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);

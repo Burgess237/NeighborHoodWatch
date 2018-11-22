@@ -61,7 +61,6 @@ import static android.Manifest.permission.READ_CONTACTS;
 public class RegisterActivity extends AppCompatActivity {
 
         private EditText inputEmail, inputPassword;
-        private ProgressBar progressBar;
         private FirebaseAuth auth;
 
         @Override
@@ -76,7 +75,6 @@ public class RegisterActivity extends AppCompatActivity {
 
             inputEmail =  findViewById(R.id.RegEmail);
             inputPassword =  findViewById(R.id.RegPassword);
-            progressBar =  findViewById(R.id.progressBar);
             Button btnResetPassword = findViewById(R.id.btn_reset_password);
 
            // btnResetPassword.setOnClickListener(v -> startActivity(new Intent(RegisterActivity.this, ResetPasswordActivity.class)));
@@ -133,12 +131,6 @@ public class RegisterActivity extends AppCompatActivity {
                             }
                         });
             });
-        }
-
-        @Override
-        protected void onResume() {
-            super.onResume();
-            progressBar.setVisibility(View.GONE);
         }
 
 
