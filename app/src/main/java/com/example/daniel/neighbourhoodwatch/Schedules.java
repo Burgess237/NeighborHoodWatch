@@ -28,7 +28,6 @@ public class Schedules extends AppCompatActivity {
     FirebaseAuth mAuth;
     RecyclerView recycleView;
     Button Delete;
-
     FirebaseRecyclerAdapter<ScheduleResponse, HistoryHolder> adapter;
 
     @Override
@@ -38,15 +37,11 @@ public class Schedules extends AppCompatActivity {
         recycleView = findViewById(R.id.recycler_view);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         mAuth = FirebaseAuth.getInstance();
         recycleView.setLayoutManager(new LinearLayoutManager(this));
-
         Delete = findViewById(R.id.btnDelete);
 
         getHistoryList();
-
-
 
     }
 
@@ -56,7 +51,6 @@ public class Schedules extends AppCompatActivity {
         String userId = user.getUid();
         FirebaseDatabase db = FirebaseDatabase.getInstance();
         //query sets the user schedule wit upcoming dates
-        //TODO: SET SCHEDULED PATROL TO DELETE ON COMPLETE
 
         Query query = db
                 .getReference("Users")
@@ -110,6 +104,7 @@ public class Schedules extends AppCompatActivity {
     }
 
     public void onPanic(View view){
+
     }
 
     class HistoryHolder extends RecyclerView.ViewHolder {

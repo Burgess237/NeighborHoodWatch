@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -17,10 +18,21 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.parse.Parse;
+import com.parse.ParseException;
+import com.parse.ParseInstallation;
+import com.parse.ParsePush;
+import com.parse.SaveCallback;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    Button Viewmap;
+    Button Viewmap,ReportIncident;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +40,18 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+
+
+        String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        if(userID.isEmpty()){
+            //send user to login again
+            startActivity(new Intent(this, LoginActivity.class));
+        }else{
+            enablePush(userID);
+        }
+
+
 
         FloatingActionButton fab =  findViewById(R.id.fab);
         fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
@@ -47,6 +71,12 @@ public class MainActivity extends AppCompatActivity
             Toast.makeText(getApplicationContext(), "Shows Map", Toast.LENGTH_LONG).show();
             startActivity(new Intent(getApplicationContext(), MapActivity.class));
         });
+
+        ReportIncident = findViewById(R.id.ReportIncident);
+        ReportIncident.setOnClickListener(view -> {
+            //Report Incident Popup
+        });
+
 
 
 
@@ -113,6 +143,53 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void onPanic(View view){
+        JSONObject data = new JSONObject();
+        // Put data in the JSON object
+        try {
+            data.put("body", "Back4App Rocks!");
+            data.put("title", "Hello from Device");
+        } catch ( JSONException e) {
+            // should not happen
+            throw new IllegalArgumentException("unexpected parsing error", e);
+        }
+        // Configure the push
+        ParsePush push = new ParsePush();
+        push.setChannel("all");
+        push.setData(data);
+        push.sendInBackground();
+    }
 
+    public void enablePush(final String userId) {
+        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+        installation.put("GCMSenderId", "123456789012");
+        installation.put("userId", userId);
+        installation.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    Log.i("push", "ok");
+                    subscribe("all");
+                    subscribe(userId);
+                } else {
+                    Log.i("push", "nok");
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+
+    public void subscribe(String channel){
+        ParsePush.subscribeInBackground(channel, new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    Log.i("Push", "subscribed");
+                } else {
+                    Log.i("push", "nok");
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 }

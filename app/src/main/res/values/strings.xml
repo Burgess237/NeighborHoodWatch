@@ -37,4 +37,10 @@
     <string name="forgot_password">Forgot Password</string>
     <string name="login">Login</string>
     <string name="go">GO</string>
+
+    <string name="back4app_server_url">https://parseapi.back4app.com/</string>
+    <string name="back4app_sender_id">136619825454</string>
+    <!-- Change the following strings as required -->
+    <string name="back4app_app_id">e00hPoRpAtNWH699KEyd8hBehX0InwB4zp0HF4DX</string>
+    <string name="back4app_client_key">Fp2YTuvEhaXbErRWXjDvBhnVapxv1c5LKPdDQj9J</string>
 </resources>
