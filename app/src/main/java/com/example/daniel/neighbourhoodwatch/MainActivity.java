@@ -5,8 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -39,12 +38,8 @@ import com.google.firebase.storage.StorageReference;
 import com.parse.ParseInstallation;
 import com.parse.ParsePush;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.InputStream;
 
-import static android.view.View.GONE;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -58,17 +53,19 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if(user ==null){
+        if(user ==null || user.getUid().isEmpty()){
             //send user to login again
             startActivity(new Intent(this, LoginActivity.class));
         }else{
             String userID = user.getUid();
-            enablePush(userID);
-            populateDisplay(userID);
+            //enablePush(userID);
+            //populateDisplay(userID);
         }
 
         UserName = findViewById(R.id.PatrollerName);
@@ -152,6 +149,9 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_manage) {
             //Open user details changer
             startActivity(new Intent(this, AdditionalDetials.class));
+        } else if (id == R.id.nav_logout){
+            FirebaseAuth.getInstance().signOut();
+            startActivity(new Intent(this, LoginActivity.class));
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -234,7 +234,7 @@ public class MainActivity extends AppCompatActivity
             if(!getNextPatrol().isEmpty()){
                 UserTime.setText(getNextPatrol());
             }else{
-                UserTime.setVisibility(GONE);
+               // UserTime.setVisibility(GONE);
             }
 
         }
