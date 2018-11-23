@@ -20,10 +20,6 @@
             android:id="@+id/nav_manage"
             android:icon="@drawable/ic_menu_manage"
             android:title="User Details" />
-        <item
-            android:id="@+id/nav_schedule_patrol"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Schedule Patrol"/>
     </group>
 
 </menu>

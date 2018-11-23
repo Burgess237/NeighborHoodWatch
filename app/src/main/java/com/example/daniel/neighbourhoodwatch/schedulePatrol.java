@@ -78,7 +78,7 @@ public class schedulePatrol extends AppCompatActivity implements DatePickerDialo
         FirebaseDatabase database =  FirebaseDatabase.getInstance();
         FirebaseUser user =  mAuth.getCurrentUser();
         String userId = user.getUid();
-        ScheduleResponse sr = new ScheduleResponse(user.getDisplayName(),date,hourString,hourStringEnd);
+        ScheduleResponse sr = new ScheduleResponse(date,hourString,hourStringEnd);
         DatabaseReference dr = database.getReference(userId).child("schedules").child(date);
         dr.child("date").setValue(sr.getDate());
         dr.child("startHour").setValue(hourString);

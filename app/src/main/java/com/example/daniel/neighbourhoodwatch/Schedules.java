@@ -1,8 +1,10 @@
 package com.example.daniel.neighbourhoodwatch;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -40,6 +42,8 @@ public class Schedules extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         recycleView.setLayoutManager(new LinearLayoutManager(this));
         Delete = findViewById(R.id.btnDelete);
+        FloatingActionButton Fab = findViewById(R.id.fab);
+        Fab.setOnClickListener(view -> startActivity(new Intent(Schedules.this,schedulePatrol.class)));
 
         getHistoryList();
 
@@ -66,7 +70,6 @@ public class Schedules extends AppCompatActivity {
             protected void onBindViewHolder(@NonNull HistoryHolder holder, int position, @NonNull ScheduleResponse model) {
                 //set data to holder from modal
                 holder.setDate("" + model.getDate());
-                holder.setName("" + model.getName());
                 holder.setStartTime(""+ model.getStartTime());
                 holder.setEndTime("" + model.getEndTime());
                 Delete.setOnClickListener(view -> FirebaseDatabase.getInstance().getReference("Users")

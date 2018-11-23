@@ -76,11 +76,6 @@ public class MainActivity extends AppCompatActivity
         UserTime = findViewById(R.id.PatrolTime);
         ProfilePic = findViewById(R.id.patrollerPic);
 
-
-        FloatingActionButton fab =  findViewById(R.id.fab);
-        fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show());
-
         DrawerLayout drawer =  findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -157,8 +152,6 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_manage) {
             //Open user details changer
             startActivity(new Intent(this, AdditionalDetials.class));
-        } else if(id == R.id.nav_schedule_patrol){
-            startActivity(new Intent(this,schedulePatrol.class));
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -166,26 +159,14 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    public void onPanic(View view){
-        JSONObject data = new JSONObject();
-        // Put data in the JSON object
-        try {
-            data.put("body", "Back4App Rocks!");
-            data.put("title", "Hello from Device");
-        } catch ( JSONException e) {
-            // should not happen
-            throw new IllegalArgumentException("unexpected parsing error", e);
-        }
-        // Configure the push
-        ParsePush push = new ParsePush();
-        push.setChannel("all");
-        push.setData(data);
-        push.sendInBackground();
+    public void Panic(View view){
+       MapActivity map = new MapActivity();
+               map.Panic();
     }
 
     public void enablePush(final String userId) {
         ParseInstallation installation = ParseInstallation.getCurrentInstallation();
-        installation.put("GCMSenderId", "123456789012");
+        installation.put("GCMSenderId", "136619825454");
         installation.put("userId", userId);
         installation.saveInBackground(e -> {
             if (e == null) {

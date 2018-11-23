@@ -40,6 +40,10 @@ import com.mapbox.services.android.navigation.ui.v5.NavigationLauncher;
 import com.mapbox.services.android.navigation.ui.v5.NavigationLauncherOptions;
 import com.mapbox.services.android.navigation.ui.v5.route.NavigationMapRoute;
 import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute;
+import com.parse.ParsePush;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -56,7 +60,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private PermissionsManager permissionsManager;
     private MapboxMap mapboxMap;
     private MapView mapView;
-    private Button navigationButton;
+    private Button navigationButton,panicButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +93,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             setRoute(destinationPoint, originLocation);
 
         }
+
+        panicButton = findViewById(R.id.PanicButton);
+        panicButton.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                Panic();
+                return false;
+            }
+        });
     }
 
     @Override
@@ -239,6 +252,32 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 }
             });
         }
+    }
+
+    public void Panic(){
+        JSONObject data = new JSONObject();
+        // Put data in the JSON object
+        try {
+            LatLng currentLocation = null;
+            currentLocation.setLatitude(originLocation.getLatitude());
+            currentLocation.setLongitude(originLocation.getLongitude());
+            data.put("body","Tap this button to navigate to the panic location");
+            data.put("LatLng", currentLocation.toString());
+            data.put("title", "Alert! Panic Button Pressed");
+        } catch ( JSONException e) {
+            // should not happen
+            throw new IllegalArgumentException("unexpected parsing error", e);
+        }
+        // Configure the push
+        ParsePush push = new ParsePush();
+        push.setChannel("all");
+        push.setData(data);
+        push.sendInBackground();
+    }
+
+    public void OnPanic(){
+        enableLocationComponent();
+        Panic();
     }
 
 }
