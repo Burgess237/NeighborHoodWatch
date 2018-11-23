@@ -1,5 +1,6 @@
 package com.example.daniel.neighbourhoodwatch;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -21,6 +22,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.Registry;
+import com.bumptech.glide.annotation.GlideModule;
+import com.bumptech.glide.module.AppGlideModule;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -28,11 +34,15 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.parse.ParseInstallation;
 import com.parse.ParsePush;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.InputStream;
 
 import static android.view.View.GONE;
 
@@ -42,7 +52,7 @@ public class MainActivity extends AppCompatActivity
     Button Viewmap,ReportIncident;
     String TAG = "MAIN ACTIVITY";
     TextView UserName,UserVehicle,UserTime;
-    //ImageView ProfilePic;
+    ImageView ProfilePic;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +74,7 @@ public class MainActivity extends AppCompatActivity
         UserName = findViewById(R.id.PatrollerName);
         UserVehicle = findViewById(R.id.PatrolCar);
         UserTime = findViewById(R.id.PatrolTime);
-        //ProfilePic = findViewById(R.id.patrollerPic);
+        ProfilePic = findViewById(R.id.patrollerPic);
 
 
         FloatingActionButton fab =  findViewById(R.id.fab);
@@ -202,6 +212,11 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void populateDisplay(String userId){
+        FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
+        StorageReference storageReference = firebaseStorage.getReference().child("images/"+ userId);
+        Glide.with(this /* context */)
+                .load(storageReference)
+                .into(ProfilePic);
         Uri uri = FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl();
         FirebaseDatabase db = FirebaseDatabase.getInstance();
         DatabaseReference mref = db.getReference().child("user").child(userId);
@@ -209,13 +224,6 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 UserDetails ud = dataSnapshot.getValue(UserDetails.class);
-
-               // ProfilePic.setImageURI(uri);
-             //   if(!ud.getPatrolTime().isEmpty()){
-              //      UserTime.setText(ud.getPatrolTime());
-             //   }else{
-                    UserTime.setVisibility(GONE);
-              //  }
             }
 
             @Override
@@ -228,20 +236,26 @@ public class MainActivity extends AppCompatActivity
     public class UserDetails {
         String userName;
         String vehicleDetails;
-        //String patrolTime;
+        String nextPatrol;
 
         public UserDetails(){
         }
 
         public UserDetails(String DisplayName,
                            String Vehicle
-                           //,String PatrolTime
+                           ,String NextPatrol
         ) {
             userName = DisplayName;
             vehicleDetails = Vehicle;
             UserName.setText(getUserName());
             UserVehicle.setText(getVehicleDetails());
-            //patrolTime = PatrolTime;
+            nextPatrol = NextPatrol;
+            if(!getNextPatrol().isEmpty()){
+                UserTime.setText(getNextPatrol());
+            }else{
+                UserTime.setVisibility(GONE);
+            }
+
         }
 
         String getUserName() {
@@ -260,13 +274,24 @@ public class MainActivity extends AppCompatActivity
             this.vehicleDetails = vehicleDetails;
         }
 
-         /*String getPatrolTime() {
-            return patrolTime;
+         String getNextPatrol() {
+            return nextPatrol;
         }
 
-        public void setPatrolTime(String patrolTime) {
-            this.patrolTime = patrolTime;
-        }*/
+        public void setNextPatrol(String nextPatrol) {
+            this.nextPatrol = nextPatrol;
+        }
+    }
+
+    @GlideModule
+    public class MyAppGlideModule extends AppGlideModule {
+
+        @Override
+        public void registerComponents(Context context, Glide glide, Registry registry) {
+            // Register FirebaseImageLoader to handle StorageReference
+            registry.append(StorageReference.class, InputStream.class,
+                    new FirebaseImageLoader.Factory());
+        }
     }
 }
 

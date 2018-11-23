@@ -41,6 +41,8 @@ public class AdditionalDetials extends AppCompatActivity {
     TextView displayName,vehicle;
     ImageButton profilePic;
     private Uri filePath;
+    FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    FirebaseUser user  = mAuth.getCurrentUser();
 
     //Firebase
     FirebaseStorage storage;
@@ -73,9 +75,7 @@ public class AdditionalDetials extends AppCompatActivity {
     }
 
     public boolean saveDetailsToFirebase(){
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        FirebaseUser user  = mAuth.getCurrentUser();
-        UserProfileChangeRequest update;
+
         Boolean success = false;
         //Check there aren't errors
         if(displayName.getText().toString().isEmpty()){
@@ -92,6 +92,7 @@ public class AdditionalDetials extends AppCompatActivity {
         DatabaseReference mref = db.getReference().child("Users").child(user.getUid());
         mref.child("DisplayName").setValue(displayName.getText().toString());
         mref.child("Vehicle").setValue(vehicle.getText().toString());
+        mref.child("NextPatrol").setValue("2018-11-30");
         uploadImage();
         success=true;
         }
@@ -136,29 +137,20 @@ public class AdditionalDetials extends AppCompatActivity {
             progressDialog.setTitle("Uploading...");
             progressDialog.show();
 
-            StorageReference ref = storageReference.child("images/"+ UUID.randomUUID().toString());
+            StorageReference ref = storageReference.child("images/"+ user.getUid());
             ref.putFile(filePath)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            progressDialog.dismiss();
-                            Toast.makeText(AdditionalDetials.this, "Uploaded", Toast.LENGTH_SHORT).show();
-                        }
+                    .addOnSuccessListener(taskSnapshot -> {
+                        progressDialog.dismiss();
+                        Toast.makeText(AdditionalDetials.this, "Uploaded", Toast.LENGTH_SHORT).show();
                     })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            progressDialog.dismiss();
-                            Toast.makeText(AdditionalDetials.this, "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
+                    .addOnFailureListener(e -> {
+                        progressDialog.dismiss();
+                        Toast.makeText(AdditionalDetials.this, "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
                     })
-                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                            double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
-                                    .getTotalByteCount());
-                            progressDialog.setMessage("Uploaded "+(int)progress+"%");
-                        }
+                    .addOnProgressListener(taskSnapshot -> {
+                        double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
+                                .getTotalByteCount());
+                        progressDialog.setMessage("Uploaded "+(int)progress+"%");
                     });
         }
     }
